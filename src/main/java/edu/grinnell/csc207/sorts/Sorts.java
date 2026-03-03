@@ -33,7 +33,7 @@ public class Sorts {
         int stopper = arr.length;
 
         for (int i = 0; i < arr.length; i++) {
-            for (int j = 1; j < stopper; j++) {
+            for (int j = 0; j < stopper; j++) {
                 if (arr[maxIndex].compareTo(arr[j]) < 0) {
                     maxIndex = j;
                 }
@@ -56,7 +56,19 @@ public class Sorts {
      * @param arr the array to sort
      */
     public static <T extends Comparable<? super T>> void selectionSort(T[] arr) {
+        int minIndex = arr.length - 1;
+        int stopper = 0;
 
+        for (int i = arr.length - 1; i >= 0; i--) {
+            for (int j = arr.length - 1; j >= stopper; j--) {
+                if (arr[minIndex].compareTo(arr[j]) > 0) {
+                    minIndex = j;
+                }
+            }
+            swap(arr, minIndex, stopper);
+            minIndex = arr.length - 1;
+            stopper++;
+        }
     }
 
     /**
