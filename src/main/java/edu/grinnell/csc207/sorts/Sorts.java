@@ -1,5 +1,7 @@
 package edu.grinnell.csc207.sorts;
 
+import java.util.Arrays;
+
 /**
  * A collection of sorting algorithms over generic arrays.
  */
@@ -105,7 +107,20 @@ public class Sorts {
      * @param arr the array to sort
      */
     public static <T extends Comparable<? super T>> void mergeSort(T[] arr) {
-        // TODO: fill me in!
+        if (arr.length == 2) {
+            if (arr[0].compareTo(arr[1]) > 0) {
+                swap(arr, 0, 1);
+            }
+        }
+        
+        T[] arr1 = Arrays.copyOfRange(arr, 0, arr.length / 2);
+        T[] arr2 = Arrays.copyOfRange(arr, arr.length / 2, arr.length);
+
+        mergeSort(arr1);
+        mergeSort(arr2);
+
+        int i = 0;
+        int j = arr.length - 1;
     }
 
     /**
@@ -120,6 +135,6 @@ public class Sorts {
      * @param arr the array to sort
      */
     public static <T extends Comparable<? super T>> void quickSort(T[] arr) {
-        // TODO: fill me in!
+        
     }
 }
