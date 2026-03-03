@@ -20,22 +20,29 @@ public class Sorts {
 
     /**
      * Sorts the array according to the bubble sort algorithm:
+     * 
      * <pre>
      * [ unprocessed | i largest elements in order ]
      * </pre>
+     * 
      * @param <T> the carrier type of the array
      * @param arr the array to sort
      */
     public static <T extends Comparable<? super T>> void bubbleSort(T[] arr) {
-        int maxIndex = arr.length -1;
+        int maxIndex = 0;
+        int stopper = arr.length;
+
         for (int i = 0; i < arr.length; i++) {
-            for (int j = 0; j < maxIndex; j++) {
-                if (arr[i].compareTo(arr[j]) > 0) {
-                    swap(arr, i, j);
+            for (int j = 1; j < stopper; j++) {
+                if (arr[maxIndex].compareTo(arr[j]) < 0) {
+                    maxIndex = j;
                 }
             }
-            maxIndex--;
+            swap(arr, maxIndex, stopper - 1);
+            maxIndex = 0;
+            stopper--;
         }
+
     }
 
     /**
