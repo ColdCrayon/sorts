@@ -82,7 +82,15 @@ public class Sorts {
      * @param arr the array to sort
      */
     public static <T extends Comparable<? super T>> void insertionSort(T[] arr) {
-        // TODO: fill me in!
+        int stopper = 0;
+        for (int i = 0; i < arr.length; i++) {
+            for (int j = stopper; j > 0; j--) {
+                if (arr[j].compareTo(arr[j - 1]) < 0) {
+                    swap(arr, j, j - 1);
+                }
+            }
+            stopper++;
+        }
     }
 
     /**
