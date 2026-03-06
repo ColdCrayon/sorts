@@ -95,43 +95,49 @@ public class Sorts {
         }
     }
 
-    public static <T extends Comparable<? super T>> void mergeHelper(T[] arr, T[] shadow) {
-        if (arr.length == 2) {
-            if (arr[0].compareTo(arr[1]) > 0) {
-                swap(arr, 0, 1);
+    public static <T extends Comparable<? super T>> void mergeHelper(T[] arr, T[] shadow, int lower, int upper) {
+        if (upper - lower == 2) {
+            if (arr[lower].compareTo(arr[upper - 1]) > 0) {
+                shadow[lower] = arr[upper - 1];
+                shadow[upper - 1] = arr[lower];
+            } else {
+                shadow[upper - 1] = arr[upper - 1];
+                shadow[lower] = arr[lower];
             }
+            return;
+        } else if (upper - lower == 1) {
+            shadow[lower] = arr[lower];
+            return;
         }
 
-        T[] arr1 = Arrays.copyOfRange(arr, 0, arr.length / 2);
-        T[] arr2 = Arrays.copyOfRange(arr, arr.length / 2, arr.length);
+        mergeHelper(arr, shadow, 0, (((upper - lower) / 2) + lower));
+        mergeHelper(arr, shadow, (((upper - lower) / 2) + lower), upper);
 
-        mergeHelper(arr1, shadow);
-        mergeHelper(arr2, shadow);
-
-        int index1 = 0;
-        int index2 = 0;
-        int i = 0;
-        for (; i < shadow.length && index1 < arr1.length && index2 < arr2.length; i++) {
-            if (arr1[index1].compareTo(arr2[index2]) < 0) {
-                shadow[i] = arr1[index1];
+        int index1 = lower;
+        int index2 = ((upper - lower) / 2) + lower;
+        int i = lower;
+        for (; i < upper && index1 < (((upper - lower) / 2) + lower) && index2 < upper; i++) {
+            if (arr[index1].compareTo(arr[index2]) < 0) {
+                shadow[i] = arr[index1];
                 index1++;
             } else {
-                shadow[i] = arr2[index2];
+                shadow[i] = arr[index2];
                 index2++;
             }
         }
 
-        if (index1 < arr1.length) {
-            for (int j = index1; j < arr1.length; j++) {
-                shadow[i] = arr1[j];
+        if (index1 < (((upper - lower) / 2) + lower)) {
+            for (int j = index1; j < (((upper - lower) / 2) + lower); j++) {
+                shadow[i] = arr[j];
                 i++;
             }
-        } else if (index2 < arr2.length) {
-            for (int j = index2; j < arr2.length; j++) {
-                shadow[i] = arr2[j];
+        } else if (index2 < upper) {
+            for (int j = index2; j < upper; j++) {
+                shadow[i] = arr[j];
                 i++;
             }
         }
+
     }
 
     /**
@@ -146,9 +152,11 @@ public class Sorts {
      * @param arr the array to sort
      */
     public static <T extends Comparable<? super T>> void mergeSort(T[] arr) {
+        System.out.println(Arrays.toString(arr));
         T[] shadow = Arrays.copyOf(arr, arr.length);
 
-        mergeHelper(arr, shadow);
+        mergeHelper(arr, shadow, 0, arr.length);
+        System.out.println(Arrays.toString(shadow));
     }
 
     /**
