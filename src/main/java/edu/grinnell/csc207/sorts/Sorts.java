@@ -1,3 +1,4 @@
+
 package edu.grinnell.csc207.sorts;
 
 import java.util.Arrays;
@@ -96,7 +97,13 @@ public class Sorts {
     }
 
     public static <T extends Comparable<? super T>> void mergeHelper(T[] arr, T[] shadow, int lower, int upper) {
-        if (upper - lower == 2) {
+
+        if (upper - lower <= 1) {
+            if (upper - lower == 1) {
+                shadow[lower] = arr[lower];
+            }
+            return;
+        } else if (upper - lower == 2) {
             if (arr[lower].compareTo(arr[upper - 1]) > 0) {
                 shadow[lower] = arr[upper - 1];
                 shadow[upper - 1] = arr[lower];
@@ -104,19 +111,20 @@ public class Sorts {
                 shadow[upper - 1] = arr[upper - 1];
                 shadow[lower] = arr[lower];
             }
-            return;
-        } else if (upper - lower == 1) {
-            shadow[lower] = arr[lower];
+            arr[lower] = shadow[lower];
+            arr[upper - 1] = shadow[upper - 1];
             return;
         }
 
-        mergeHelper(arr, shadow, 0, (((upper - lower) / 2) + lower));
-        mergeHelper(arr, shadow, (((upper - lower) / 2) + lower), upper);
+        int mid = ((upper - lower) / 2) + lower;
+
+        mergeHelper(arr, shadow, lower, mid);
+        mergeHelper(arr, shadow, mid, upper);
 
         int index1 = lower;
-        int index2 = ((upper - lower) / 2) + lower;
+        int index2 = mid;
         int i = lower;
-        for (; i < upper && index1 < (((upper - lower) / 2) + lower) && index2 < upper; i++) {
+        for (; i < upper && index1 < mid && index2 < upper; i++) {
             if (arr[index1].compareTo(arr[index2]) < 0) {
                 shadow[i] = arr[index1];
                 index1++;
@@ -126,8 +134,8 @@ public class Sorts {
             }
         }
 
-        if (index1 < (((upper - lower) / 2) + lower)) {
-            for (int j = index1; j < (((upper - lower) / 2) + lower); j++) {
+        if (index1 < mid) {
+            for (int j = index1; j < mid; j++) {
                 shadow[i] = arr[j];
                 i++;
             }
@@ -137,6 +145,10 @@ public class Sorts {
                 i++;
             }
         }
+
+        for (int j = lower; j < upper; j++) {
+            arr[j] = shadow[j];
+    }
 
     }
 
@@ -152,12 +164,44 @@ public class Sorts {
      * @param arr the array to sort
      */
     public static <T extends Comparable<? super T>> void mergeSort(T[] arr) {
-        System.out.println(Arrays.toString(arr));
         T[] shadow = Arrays.copyOf(arr, arr.length);
 
         mergeHelper(arr, shadow, 0, arr.length);
-        System.out.println(Arrays.toString(shadow));
     }
+
+    public static <T extends Comparable<? super T>> void quickHelper(T[] arr, int lower, int upper) {
+        //check base case fr
+        if (upper - lower <= 1) {
+            return;
+        }
+        int mid = ((upper - lower) / 2) + lower; //find midpoint
+        if ((arr[mid].compareTo(arr[lower]) < 0 && arr[lower].compareTo(arr[upper - 1]) < 0) ||
+            (arr[upper - 1].compareTo(arr[lower]) < 0 && arr[lower].compareTo(arr[mid]) < 0)){ //if lower is median, switch lower to last element
+            T temp = arr[lower];
+            arr[lower] = arr[upper - 1];
+            arr[upper - 1] = temp;
+        } else if ((arr[lower].compareTo(arr[mid]) < 0 && arr[mid].compareTo(arr[upper - 1]) < 0) ||
+                   (arr[upper - 1].compareTo(arr[mid]) < 0 && arr[mid].compareTo(arr[lower]) < 0)){ //if mid is median, switch mid to last element
+            T temp = arr[mid];
+            arr[mid] = arr[upper - 1];
+            arr[upper - 1] = temp;
+        }
+        int boundary = lower; //boundary of sorted region
+        for (int i = lower; i < upper - 1; i++){ //sweep.
+            if (arr[i].compareTo(arr[upper - 1]) <= 0){ //if element is less than pivot, move it to the boundary region.
+                T temp = arr[boundary];
+                arr[boundary] = arr[i];
+                arr[i] = temp;
+                boundary++;
+            }
+        }
+        T temp = arr[boundary];
+        arr[boundary] = arr[upper - 1];
+        arr[upper - 1] = temp;
+        quickHelper(arr, lower, boundary);
+        quickHelper(arr, boundary + 1, upper);
+    }
+
 
     /**
      * Sorts the array according to the quick sort algorithm:
@@ -171,6 +215,6 @@ public class Sorts {
      * @param arr the array to sort
      */
     public static <T extends Comparable<? super T>> void quickSort(T[] arr) {
-
+        quickHelper(arr, 0, arr.length);
     }
 }
